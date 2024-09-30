@@ -26,7 +26,10 @@ jobs:
 
       - name: Download latest version of the DB
         run: |
-          oras pull ghcr.io/aquasecurity/trivy-db:2
+          tags=(latest ${{ env.VERSION }})
+          for tag in ${tags[@]}; do
+            ./oras ghcr.io/aquasecurity/trivy-db:${tag}
+          done        
 
       - name: Login to GitHub Packages Container registry
         uses: docker/login-action@v3
