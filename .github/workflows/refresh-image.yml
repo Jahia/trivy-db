@@ -26,7 +26,7 @@ jobs:
 
       - name: Download latest version of the DB
         run: |
-          ./oras pull ghcr.io/aquasecurity/trivy-db:${tag}
+          ./oras pull ghcr.io/aquasecurity/trivy-db:${{ env.VERSION }}
 
       - name: Login to GitHub Packages Container registry
         uses: docker/login-action@v3
@@ -38,9 +38,6 @@ jobs:
       - name: Upload assets to GHCR
         run: |
           ./oras version
-          tags=(latest ${{ env.VERSION }})
-          for tag in ${tags[@]}; do
-            ./oras push --artifact-type application/vnd.aquasec.trivy.config.v1+json \
-              ghcr.io/jahia/${{ github.repository }}:${tag} \
-              db.tar.gz:application/vnd.aquasec.trivy.db.layer.v1.tar+gzip
-          done
+          ./oras push --artifact-type application/vnd.aquasec.trivy.config.v1+json \
+            ghcr.io/jahia/${{ github.repository }}:${{ env.VERSION }} \
+            db.tar.gz:application/vnd.aquasec.trivy.db.layer.v1.tar+gzip
