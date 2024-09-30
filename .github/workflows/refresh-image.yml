@@ -1,0 +1,38 @@
+# Inspiration taken from: https://github.com/aquasecurity/trivy-db/blob/main/.github/workflows/cron.yml
+name: Refresh Trivy DB Clone
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'
+
+env:
+  VERSION: 2
+
+jobs:
+  build:
+    name: Build DB
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Install oras
+        run: |
+          # upgrade to ORAS 1.0.0
+          curl -LO https://github.com/oras-project/oras/releases/download/v1.0.0/oras_1.0.0_linux_amd64.tar.gz
+          tar -xvf ./oras_1.0.0_linux_amd64.tar.gz
+
+      - name: Download latest version of the DB
+        run: |
+          oras pull ghcr.io/aquasecurity/trivy-db:2
+
+      - name: Upload assets to GHCR
+        run: |
+          ./oras version
+          tags=(latest ${{ env.VERSION }})
+          for tag in ${tags[@]}; do
+            ./oras push --artifact-type application/vnd.aquasec.trivy.config.v1+json \
+              ghcr.io/${{ github.repository }}:${tag} \
+              db.tar.gz:application/vnd.aquasec.trivy.db.layer.v1.tar+gzip
+          done
