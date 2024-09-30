@@ -1,13 +1,13 @@
-# Inspiration taken from: https://github.com/aquasecurity/trivy-db/blob/main/.github/workflows/cron.yml
-name: Refresh Trivy DB Clone
+# Inspiration taken from: https://github.com/aquasecurity/trivy-java-db/blob/main/.github/workflows/cron.yml
+name: Refresh Trivy Java DB Clone
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 1 * * *'
 
 env:
-  VERSION: 2
+  VERSION: 1
   GH_USER: jahia-ci
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
 
       - name: Download latest version of the DB
         run: |
-          ./oras pull ghcr.io/aquasecurity/trivy-db:${{ env.VERSION }}
+          ./oras pull ghcr.io/aquasecurity/trivy-java-db:${{ env.VERSION }}
 
       - name: Login to GitHub Packages Container registry
         uses: docker/login-action@v3
@@ -39,5 +39,5 @@ jobs:
         run: |
           ./oras version
           ./oras push --artifact-type application/vnd.aquasec.trivy.config.v1+json \
-            ghcr.io/jahia/trivy-db:${{ env.VERSION }} \
-            db.tar.gz:application/vnd.aquasec.trivy.db.layer.v1.tar+gzip
+            ghcr.io/jahia/trivy-java-db:${{ env.VERSION }} \
+            javadb.tar.gz:application/vnd.aquasec.trivy.javadb.layer.v1.tar+gzip
