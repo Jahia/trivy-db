@@ -8,6 +8,7 @@ on:
 
 env:
   VERSION: 2
+  GH_USER: jahia-ci
 
 jobs:
   build:
@@ -26,6 +27,13 @@ jobs:
       - name: Download latest version of the DB
         run: |
           oras pull ghcr.io/aquasecurity/trivy-db:2
+
+      - name: Login to GitHub Packages Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ env.GH_USER }}
+          password: ${{ secrets.GH_PACKAGES_TOKEN }}
 
       - name: Upload assets to GHCR
         run: |
