@@ -39,5 +39,5 @@ jobs:
         run: |
           ./oras version
           ./oras push --artifact-type application/vnd.aquasec.trivy.config.v1+json \
-            ghcr.io/jahia/${{ github.repository }}:${{ env.VERSION }} \
+            ghcr.io/jahia/trivy-db:${{ env.VERSION }} \
             db.tar.gz:application/vnd.aquasec.trivy.db.layer.v1.tar+gzip
